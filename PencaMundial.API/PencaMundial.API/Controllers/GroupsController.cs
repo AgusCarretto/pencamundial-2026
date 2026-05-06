@@ -100,6 +100,35 @@ namespace PencaMundial.API.Controllers
         }
 
 
+        // GET: api/Groups/{id}/ranking
+        [HttpGet("{id}/ranking")]
+        public async Task<ActionResult<IEnumerable<UserRankingDto>>> GetGroupRanking(int id)
+        {
+            // 1. Buscamos el grupo y le decimos a Entity Framework que "incluya" a los usuarios
+            var group = await _context.Groups
+                .Include(g => g.Users)
+                .SingleOrDefaultAsync(g => g.Id == id);
+
+            if (group == null)
+            {
+                return NotFound("El grupo no existe.");
+            }
+
+            // 2. Armamos el ranking ordenando por TotalPoints de forma descendente
+            var ranking = group.Users
+                .OrderByDescending(u => u.TotalPoints)
+                .Select(u => new UserRankingDto
+                {
+                    UserName = u.UserName,
+                    TotalPoints = u.TotalPoints
+                })
+                .ToList();
+
+            return Ok(ranking);
+        }
+
+
+
 
     }
 }

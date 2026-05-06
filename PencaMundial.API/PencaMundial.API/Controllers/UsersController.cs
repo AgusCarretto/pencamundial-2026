@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using PencaMundial.API.Data;
 using PencaMundial.API.DTOs;
 using PencaMundial.API.Models;
-using Microsoft.AspNetCore.Identity;
 
 namespace PencaMundial.API.Controllers
 {
@@ -43,6 +44,24 @@ namespace PencaMundial.API.Controllers
 
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, response);
         }
+
+        // GET: api/Users/global-ranking
+        [HttpGet("global-ranking")]
+        public async Task<ActionResult<IEnumerable<UserRankingDto>>> GetGlobalRanking()
+        {
+            // Traemos a todos, ordenamos por puntos y proyectamos al DTO
+            var ranking = await _context.Users
+                .OrderByDescending(u => u.TotalPoints)
+                .Select(u => new UserRankingDto
+                {
+                    UserName = u.UserName,
+                    TotalPoints = u.TotalPoints
+                })
+                .ToListAsync();
+
+            return Ok(ranking);
+        }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<UserResponseDto>> GetUser(int id)

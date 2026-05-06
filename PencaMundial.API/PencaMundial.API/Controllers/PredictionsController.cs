@@ -78,5 +78,34 @@ namespace PencaMundial.API.Controllers
                 PointsEarned = prediction.PointsEarned
             });
         }
+
+
+        // GET: api/Predictions/my-predictions
+        [HttpGet("my-predictions")]
+        public async Task<ActionResult<IEnumerable<PredictionResponseDto>>> GetMyPredictions()
+        {
+            // Sacamos el ID del token (la pulsera VIP)
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (userIdClaim == null) return Unauthorized();
+
+            int userId = int.Parse(userIdClaim);
+
+            // Buscamos todas sus predicciones
+            var predictions = await _context.Predictions
+                .Where(p => p.UserId == userId)
+                .Select(p => new PredictionResponseDto
+                {
+                    Id = p.Id,
+                    MatchId = p.MatchId,
+                    PredictedHomeScore = p.PredictedHomeScore,
+                    PredictedAwayScore = p.PredictedAwayScore,
+                    PointsEarned = p.PointsEarned
+                })
+                .ToListAsync();
+
+            return Ok(predictions);
+        }
+
+
     }
 }
