@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PencaMundial.API.Data;
 using PencaMundial.API.DTOs;
@@ -6,6 +7,7 @@ using PencaMundial.API.Models;
 
 namespace PencaMundial.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class GroupsController : ControllerBase

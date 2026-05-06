@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity; 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PencaMundial.API.Data;
 using PencaMundial.API.DTOs;
 using PencaMundial.API.Models;
-using Microsoft.AspNetCore.Identity; 
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace PencaMundial.API.Controllers
 {
@@ -37,12 +41,34 @@ namespace PencaMundial.API.Controllers
                 return Unauthorized("Usuario o contraseña incorrectos.");
             }
 
-            return new UserResponseDto
+            // FABRICAMOS EL TOKEN (La pulsera VIP)
+            var tokenHandler = new JwtSecurityTokenHandler();
+            // OJO ACÁ: asegurate de inyectar IConfiguration en el constructor del AuthController para poder leer la clave del appsettings
+            var key = Encoding.UTF8.GetBytes("PencaMundialSecreta2026SuperLargaYSeguraParaQueNoFalle");
+
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new[]
+                {
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.UserName)
+                }),
+                Expires = DateTime.UtcNow.AddDays(7), // El token dura 7 días
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+
+
+
+            return Ok(new
             {
                 Id = user.Id,
                 UserName = user.UserName,
-                TotalPoints = user.TotalPoints
-            };
+                TotalPoints = user.TotalPoints,
+                Token = tokenString
+            });
         }
     }
 }
