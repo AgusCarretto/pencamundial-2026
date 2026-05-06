@@ -19,17 +19,49 @@ namespace PencaMundial.API.Controllers
             _context = context;
         }
 
+        // GET: api/Groups
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<GroupResponseDto>>> GetMyGroups()
+        {
+            // Sacamos el nombre de usuario directamente del Token JWT
+            var userName = User.Identity?.Name;
+
+            // Buscamos al usuario en la BD e incluimos la lista de grupos a los que pertenece
+            var user = await _context.Users
+                .Include(u => u.Groups)
+                .SingleOrDefaultAsync(u => u.UserName == userName);
+
+            if (user == null) return NotFound("Usuario no encontrado.");
+
+            // Transformamos las entidades Group a DTOs
+            var response = user.Groups.Select(g => new GroupResponseDto
+            {
+                Id = g.Id,
+                Name = g.Name,
+                Code = g.Code
+            }).ToList();
+
+            return Ok(response);
+        }
+
         // POST: api/Groups
         [HttpPost]
         public async Task<ActionResult<GroupResponseDto>> CreateGroup(GroupCreateDto dto)
         {
+            // Buscamos al creador usando el Token
+            var userName = User.Identity?.Name;
+            var currentUser = await _context.Users.SingleOrDefaultAsync(u => u.UserName == userName);
+
+            if (currentUser == null) return Unauthorized("Usuario no válido.");
+
             // Generamos un código único aleatorio de 6 caracteres (letras y números)
             string generatedCode = GenerateUniqueCode();
 
             var group = new Group
             {
                 Name = dto.Name,
-                Code = generatedCode
+                Code = generatedCode,
+                Users = new List<User> { currentUser } // <- El creador se agrega automáticamente al grupo
             };
 
             _context.Groups.Add(group);
@@ -64,20 +96,15 @@ namespace PencaMundial.API.Controllers
             };
         }
 
-        // Método privado para generar el código (ej: "A7B9X2")
-        private string GenerateUniqueCode()
-        {
-            // Crea un GUID, le saca los guiones, lo pasa a mayúsculas y toma los primeros 6 caracteres
-            return Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
-        }
-
-
+        // POST: api/Groups/join
         [HttpPost("join")]
-        public async Task<IActionResult> JoinGroup(JoinGroupDto dto)
+        public async Task<IActionResult> JoinGroup([FromBody] JoinGroupDto dto)
         {
-            // 1. Buscamos al usuario
-            var user = await _context.Users.FindAsync(dto.UserId);
-            if (user == null) return NotFound("Usuario no encontrado.");
+            // 1. Buscamos al usuario de forma segura con el Token
+            var userName = User.Identity?.Name;
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.UserName == userName);
+
+            if (user == null) return Unauthorized("Usuario no válido.");
 
             // 2. Buscamos el grupo por código (incluyendo la lista de usuarios actuales)
             var group = await _context.Groups
@@ -98,7 +125,6 @@ namespace PencaMundial.API.Controllers
 
             return Ok(new { message = $"Te uniste exitosamente al grupo: {group.Name}" });
         }
-
 
         // GET: api/Groups/{id}/ranking
         [HttpGet("{id}/ranking")]
@@ -127,8 +153,11 @@ namespace PencaMundial.API.Controllers
             return Ok(ranking);
         }
 
-
-
-
+        // Método privado para generar el código (ej: "A7B9X2")
+        private string GenerateUniqueCode()
+        {
+            // Crea un GUID, le saca los guiones, lo pasa a mayúsculas y toma los primeros 6 caracteres
+            return Guid.NewGuid().ToString("N").Substring(0, 6).ToUpper();
+        }
     }
 }
