@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { groupService } from '../services/groupService';
+import { useNavigate } from 'react-router-dom';
 import { Users, PlusCircle, LogIn, ChevronRight } from 'lucide-react';
 
 // Tipado rápido para salir del paso (luego lo pasamos a types/index.ts)
@@ -29,18 +30,22 @@ const GroupsPage = () => {
         }
     };
 
+    const navigate = useNavigate();
+
     const handleCreateOrJoin = async (action: 'create' | 'join') => {
         if (!groupInput.trim()) return;
         setError('');
 
         try {
             if (action === 'create') {
-                await groupService.createGroup(groupInput);
+                const newGroup = await groupService.createGroup(groupInput);
+                // Redirigimos usando el ID que nos devolvió C#
+                navigate(`/groups/${newGroup.id}`);
             } else {
-                await groupService.joinGroup(groupInput);
+                const response = await groupService.joinGroup(groupInput);
+                // Redirigimos usando el ID que agregamos a C# en el Paso 1
+                navigate(`/groups/${response.groupId}`);
             }
-            setGroupInput('');
-            loadGroups(); // Recargamos la lista
         } catch (err: any) {
             setError(err.response?.data?.message || `Error al ${action === 'create' ? 'crear' : 'unirse al'} grupo.`);
         }
@@ -97,7 +102,7 @@ const GroupsPage = () => {
                     </div>
                 ) : (
                     groups.map(group => (
-                        <div key={group.id} className="bg-slate-900 border border-slate-800 hover:border-slate-700 p-5 rounded-2xl flex items-center justify-between cursor-pointer transition-all group">
+                        <div key={group.id} onClick={() => navigate(`/groups/${group.id}`)} className="bg-slate-900 border border-slate-800 hover:border-slate-700 p-5 rounded-2xl flex items-center justify-between cursor-pointer transition-all group">
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 bg-slate-800 rounded-full flex items-center justify-center font-black text-slate-400 group-hover:text-blue-400 transition-colors">
                                     {group.name.substring(0, 2).toUpperCase()}

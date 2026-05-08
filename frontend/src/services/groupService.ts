@@ -24,5 +24,9 @@ export const groupService = {
     getGroupRanking: async (groupId: number) => {
         const response = await api.get(`/Groups/${groupId}/ranking`);
         return response.data;
+    },
+    getGroupById: async (groupId: number) => {
+        const response = await api.get(`/Groups/${groupId}`);
+        return response.data;
     }
 };

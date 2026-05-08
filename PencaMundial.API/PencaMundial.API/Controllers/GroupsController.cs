@@ -123,7 +123,12 @@ namespace PencaMundial.API.Controllers
             group.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = $"Te uniste exitosamente al grupo: {group.Name}" });
+
+            return Ok(new
+            {
+                message = $"Te uniste exitosamente al grupo: {group.Name}",
+                groupId = group.Id
+            });
         }
 
         // GET: api/Groups/{id}/ranking
