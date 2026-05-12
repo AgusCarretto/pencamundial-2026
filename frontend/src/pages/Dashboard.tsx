@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { matchService } from '../services/matchService';
 import type { Match } from '../types';
 import { Save, CheckCircle2, Lock, Trophy } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 // Diccionario de banderas mapeado por nombre de país completo (inglés y español)
 const getCountryCode = (countryName: string) => {
