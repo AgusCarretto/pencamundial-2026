@@ -1,21 +1,23 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../services/authService';
-import { UserPlus, Mail, Lock, User } from 'lucide-react';
+import { UserPlus, Phone, Lock, User } from 'lucide-react';
 
 const RegisterPage = () => {
-    const [formData, setFormData] = useState({ userName: '', email: '', password: '' });
+    // 1. Cambiamos 'email' por 'phoneNumber' en el estado inicial
+    const [formData, setFormData] = useState({ userName: '', phoneNumber: '', password: '' });
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            await authService.register(formData.userName, formData.email, formData.password);
+            // 2. Pasamos el phoneNumber al servicio
+            await authService.register(formData.userName, formData.phoneNumber, formData.password);
             alert("¡Registro exitoso! Ahora podés iniciar sesión.");
             navigate('/login');
         } catch (err) {
-            setError("Error al registrar usuario. Intentá con otro nombre o email.");
+            setError("Error al registrar usuario. Intentá con otro nombre o celular.");
         }
     };
 
@@ -51,16 +53,17 @@ const RegisterPage = () => {
                         </div>
                     </div>
 
+                    {/* 3. Cambiamos la sección de Email por Celular */}
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black text-emerald-50 uppercase ml-2 drop-shadow-sm">Email</label>
+                        <label className="text-[10px] font-black text-emerald-50 uppercase ml-2 drop-shadow-sm">Celular</label>
                         <div className="relative">
-                            <Mail className="absolute left-4 top-3.5 w-5 h-5 text-yellow-400" />
+                            <Phone className="absolute left-4 top-3.5 w-5 h-5 text-yellow-400" />
                             <input
-                                type="email"
+                                type="tel"
                                 required
                                 className="w-full bg-green-950/50 border border-green-800/50 rounded-2xl py-3.5 pl-12 pr-4 text-white placeholder-emerald-200/30 focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent transition-all backdrop-blur-sm"
-                                placeholder="tu@email.com"
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                placeholder="Ej: 099123456"
+                                onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
                             />
                         </div>
                     </div>
