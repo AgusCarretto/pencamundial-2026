@@ -34,7 +34,8 @@ namespace PencaMundial.API.Controllers
                     HomeScore = m.HomeScore,
                     AwayScore = m.AwayScore,
                     MatchDate = m.MatchDate,
-                    Status = m.Status
+                    Status = m.Status,
+                    GroupName = m.GroupName
                 })
                 .ToListAsync();
 

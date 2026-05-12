@@ -10,6 +10,7 @@ export interface Match {
     awayTeam: string;
     homeScore?: number;
     awayScore?: number;
+    groupName: string;
     matchDate: string;
     status: 'Pending' | 'InProgress' | 'Finished';
 }

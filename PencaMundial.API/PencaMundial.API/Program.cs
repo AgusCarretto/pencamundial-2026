@@ -7,6 +7,9 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddHttpClient(); // Esto nos permite inyectar IHttpClientFactory
+builder.Services.AddScoped<PencaMundial.API.Services.SyncService>();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -90,5 +93,23 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+// La precarga por si falta algun partido, ya eliminatorias por ejemplo
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        // Ejecutamos el seed
+        await PencaMundial.API.Data.DbSeeder.SeedMatches(context);
+    }
+    catch (Exception ex)
+    {
+        var logger = services.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "Ocurrió un error durante el seeding de la base de datos.");
+    }
+}
 
 app.Run();

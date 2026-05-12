@@ -14,6 +14,8 @@
 
         public DateTime MatchDate { get; set; }
 
+        public string GroupName { get; set; } = string.Empty;
+
         public string Status { get; set; } = "Pending"; // Estados posibles: Pending, InProgress, Finished
 
         // Propiedad de navegación: Todas las predicciones que hicieron los usuarios sobre este partido

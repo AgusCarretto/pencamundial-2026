@@ -6,6 +6,7 @@ import Dashboard from '../pages/Dashboard';
 import RankingPage from '../pages/RankingPage';
 import GroupsPage from '../pages/GroupPages';
 import GroupDetailsPage from '../pages/GroupDetailsPage';
+import AdminPage from '../pages/adminPage';
 
 const AppRouter = () => {
     return (
@@ -21,6 +22,7 @@ const AppRouter = () => {
                         <Route path="/ranking" element={<RankingPage />} />
                         <Route path="/groups" element={<GroupsPage />} />
                         <Route path="/groups/:id" element={<GroupDetailsPage />} />
+                        <Route path="/admin" element={<AdminPage />} />
                         {/* Aquí irán el ranking, mis grupos, etc. */}
                     </Route>
                 </Route>
