@@ -78,7 +78,7 @@ namespace PencaMundial.API.Services
 
 
 
-        private async Task DistributePointsAsync(int matchId, int actualHome, int actualAway)
+        public async Task DistributePointsAsync(int matchId, int actualHome, int actualAway)
         {
             // Buscamos todas las predicciones para este partido e incluimos al Usuario
             var predictions = await _context.Predictions
