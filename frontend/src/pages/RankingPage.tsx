@@ -22,62 +22,67 @@ const RankingPage = () => {
         fetchRanking();
     }, []);
 
-    if (loading) return <div className="p-10 text-center text-slate-500">Cargando la tabla...</div>;
+    if (loading) return (
+        <div className="min-h-[50vh] flex flex-col items-center justify-center space-y-4">
+            <div className="text-4xl animate-bounce">⚽</div>
+            <div className="text-yellow-400 font-black tracking-widest uppercase animate-pulse">Armando posiciones...</div>
+        </div>
+    );
 
     return (
-        <div>
-            <div className="flex items-center gap-3 mb-8 border-b border-slate-800 pb-5">
-                <div className="bg-emerald-950 p-3 rounded-2xl border border-emerald-800 shadow-[0_0_15px_rgba(16,185,129,0.2)]">
-                    <Award className="w-7 h-7 text-emerald-400" />
+        <div className="max-w-5xl mx-auto px-4 py-8 relative">
+            <div className="flex items-center gap-4 mb-8 border-b border-green-800/50 pb-6 relative">
+                <div className="bg-gradient-to-br from-yellow-300 to-yellow-500 p-3 sm:p-4 rounded-full shadow-[0_0_20px_rgba(234,179,8,0.4)]">
+                    <Award className="w-6 h-6 sm:w-8 sm:h-8 text-green-950" />
                 </div>
                 <div>
-                    <h2 className="text-3xl font-extrabold text-white tracking-tighter">Tabla General</h2>
-                    <p className="text-slate-500">Los mejores pronosticadores de la Penca</p>
+                    <h2 className="text-3xl sm:text-4xl font-black text-white italic drop-shadow-md tracking-tighter">TABLA <span className="text-yellow-400">GENERAL</span></h2>
+                    <p className="text-emerald-400/70 text-[10px] sm:text-xs font-black uppercase tracking-widest">Los mejores pronosticadores de la Penca</p>
                 </div>
             </div>
 
-            <div className="bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-xl">
+            <div className="bg-green-900/30 backdrop-blur-sm border border-green-800/50 rounded-3xl overflow-hidden shadow-xl">
                 <table className="w-full text-left">
-                    <thead className="bg-slate-800/50 border-b border-slate-800">
+                    <thead className="bg-green-950/80 border-b border-green-800/50">
                         <tr>
-                            <th className="px-6 py-4 text-xs font-bold uppercase text-slate-400 tracking-wider w-20 text-center">Pos</th>
-                            <th className="px-6 py-4 text-xs font-bold uppercase text-slate-400 tracking-wider">Usuario</th>
-                            <th className="px-6 py-4 text-xs font-bold uppercase text-slate-400 tracking-wider text-right w-32">Puntos</th>
+                            <th className="px-4 sm:px-6 py-4 text-xs font-bold uppercase text-emerald-300/70 tracking-wider w-16 sm:w-20 text-center">Pos</th>
+                            <th className="px-4 sm:px-6 py-4 text-xs font-bold uppercase text-emerald-300/70 tracking-wider">Usuario</th>
+                            <th className="px-4 sm:px-6 py-4 text-xs font-bold uppercase text-emerald-300/70 tracking-wider text-right w-24 sm:w-32">Puntos</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/50">
+                    <tbody className="divide-y divide-green-800/30">
                         {ranking.map((user, index) => {
                             const pos = index + 1;
                             const isFirst = pos === 1;
                             const isMe = user.userName === currentUser.userName;
 
                             return (
-                                <tr key={user.userName} className={`${isMe ? 'bg-blue-950/30' : ''} hover:bg-slate-800/30 transition-colors`}>
-                                    <td className="px-6 py-5 text-center">
+                                <tr key={user.userName} className={`${isMe ? 'bg-yellow-500/10' : ''} hover:bg-green-800/30 transition-colors`}>
+                                    <td className="px-4 sm:px-6 py-4 sm:py-5 text-center">
                                         {isFirst ? (
-                                            <Medal className="w-6 h-6 text-yellow-500 mx-auto" />
+                                            <Medal className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 mx-auto drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
                                         ) : (
-                                            <span className={`font-mono text-lg ${pos <= 3 ? 'text-white font-bold' : 'text-slate-600'}`}>
+                                            <span className={`font-mono text-base sm:text-lg ${pos <= 3 ? 'text-white font-bold drop-shadow-sm' : 'text-emerald-400/50'}`}>
                                                 #{pos}
                                             </span>
                                         )}
                                     </td>
-                                    <td className="px-6 py-5 flex items-center gap-3">
-                                        <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm ${isMe ? 'bg-blue-600 text-white' : 'bg-slate-800 text-slate-400'}`}>
+                                    <td className="px-4 sm:px-6 py-4 sm:py-5 flex items-center gap-3">
+                                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-inner ${isMe ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-green-950 shadow-[0_0_10px_rgba(234,179,8,0.3)]' : 'bg-green-950 text-emerald-400 border border-green-800/50'}`}>
                                             {user.userName.substring(0, 2).toUpperCase()}
                                         </div>
                                         <div>
-                                            <span className={`font-bold ${isMe ? 'text-blue-400' : 'text-white'}`}>
+                                            <span className={`font-black tracking-tight text-sm sm:text-base ${isMe ? 'text-yellow-400 drop-shadow-md' : 'text-white'}`}>
                                                 {user.userName}
                                             </span>
-                                            {isMe && <span className="text-xs text-blue-500 ml-2 font-medium">(Tú)</span>}
+                                            {isMe && <span className="text-[10px] sm:text-xs text-yellow-500/80 ml-2 font-black uppercase tracking-widest">(Tú)</span>}
                                         </div>
                                     </td>
-                                    <td className="px-6 py-5 text-right">
-                                        <span className="text-2xl font-black text-emerald-400 tracking-tight">
+                                    <td className="px-4 sm:px-6 py-4 sm:py-5 text-right">
+                                        <span className="text-xl sm:text-2xl font-black text-emerald-400 tracking-tight drop-shadow-sm">
                                             {user.totalPoints}
                                         </span>
-                                        <span className="text-xs text-emerald-700 font-bold ml-1">pts</span>
+                                        <span className="text-[10px] sm:text-xs text-emerald-600 font-bold ml-1 uppercase">pts</span>
                                     </td>
                                 </tr>
                             );
