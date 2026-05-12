@@ -1,5 +1,5 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { Trophy, LogOut, Globe, Users } from 'lucide-react';
+import { Trophy, LogOut, Globe, Users, History } from 'lucide-react';
 
 // Ícono SVG personalizado para la pelota de fútbol (estilo Lucide)
 const SoccerBallIcon = ({ className }: { className?: string }) => (
@@ -50,6 +50,9 @@ const MainLayout = () => {
                         <button onClick={() => navigate('/ranking')} className={`flex items-center gap-2 font-bold text-sm transition-colors ${getActiveColor('/ranking')}`}>
                             <Globe className="w-4 h-4" /> Global
                         </button>
+                        <button onClick={() => navigate('/history')} className={`flex items-center gap-2 font-bold text-sm transition-colors ${getActiveColor('/history')}`}>
+                            <History className="w-4 h-4" /> Historial
+                        </button>
                     </div>
                 </div>
 
@@ -82,6 +85,10 @@ const MainLayout = () => {
                 <button onClick={() => navigate('/ranking')} className={`flex flex-col items-center gap-1 w-20 transition-colors ${getActiveColor('/ranking')}`}>
                     <Globe className="w-6 h-6" />
                     <span className='text-[10px] font-bold uppercase'>Global</span>
+                </button>
+                <button onClick={() => navigate('/history')} className={`flex flex-col items-center gap-1 w-20 transition-colors ${getActiveColor('/history')}`}>
+                    <History className="w-6 h-6" />
+                    <span className='text-[10px] font-bold uppercase'>Historial</span>
                 </button>
             </div>
         </div>

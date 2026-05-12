@@ -7,6 +7,8 @@ import RankingPage from '../pages/RankingPage';
 import GroupsPage from '../pages/GroupPages';
 import GroupDetailsPage from '../pages/GroupDetailsPage';
 import AdminPage from '../pages/adminPage';
+import RegisterPage from '../pages/RegisterPage';
+import HistoryPage from '../pages/HistoryPage';
 
 const AppRouter = () => {
     return (
@@ -14,7 +16,7 @@ const AppRouter = () => {
             <Routes>
                 {/* Rutas Públicas */}
                 <Route path="/login" element={<LoginPage />} />
-
+                <Route path="/register" element={<RegisterPage />} />
                 {/* Rutas Privadas */}
                 <Route element={<ProtectedRoute />}>
                     <Route element={<MainLayout />}>
@@ -23,6 +25,7 @@ const AppRouter = () => {
                         <Route path="/groups" element={<GroupsPage />} />
                         <Route path="/groups/:id" element={<GroupDetailsPage />} />
                         <Route path="/admin" element={<AdminPage />} />
+                        <Route path="/history" element={<HistoryPage />} />
                         {/* Aquí irán el ranking, mis grupos, etc. */}
                     </Route>
                 </Route>

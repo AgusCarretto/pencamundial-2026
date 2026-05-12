@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom'; // <-- Agregamos Link acá
 import { authService } from '../services/authService';
 import { Trophy, User, Lock } from 'lucide-react';
 
@@ -68,6 +68,11 @@ const LoginPage = () => {
                         Entrar a la Cancha
                     </button>
                 </form>
+
+                {/* Agregamos el enlace al registro con el mismo estilo */}
+                <p className="text-center text-slate-500 text-xs mt-8 font-bold">
+                    ¿NO TENÉS CUENTA? <Link to="/register" className="text-blue-500 hover:underline">REGISTRATE ACÁ</Link>
+                </p>
             </div>
         </div>
     );

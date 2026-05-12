@@ -3,12 +3,14 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PencaMundial.API.Data;
+using PencaMundial.API.Workers;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient(); // Esto nos permite inyectar IHttpClientFactory
 builder.Services.AddScoped<PencaMundial.API.Services.SyncService>();
+builder.Services.AddHostedService<SyncWorker>();
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

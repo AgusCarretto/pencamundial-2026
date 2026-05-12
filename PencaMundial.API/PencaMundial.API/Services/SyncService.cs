@@ -59,9 +59,14 @@ namespace PencaMundial.API.Services
                     dbMatch.HomeScore = extMatch.HomeScore;
                     dbMatch.AwayScore = extMatch.AwayScore;
 
+                    // Detectamos si el partido acaba de finalizar en la API
                     if (extMatch.Status == "Finished")
                     {
                         dbMatch.Status = "Finished";
+
+                        // ¡REPARTIMOS LOS PUNTOS! 
+                        // Usamos los goles que vienen de la API
+                        await DistributePointsAsync(dbMatch.Id, extMatch.HomeScore ?? 0, extMatch.AwayScore ?? 0);
                     }
                     updated++;
                 }
@@ -70,6 +75,50 @@ namespace PencaMundial.API.Services
             await _context.SaveChangesAsync();
             return $"Sincronización completa desde API. Creados: {created}, Actualizados: {updated}.";
         }
+
+
+
+        private async Task DistributePointsAsync(int matchId, int actualHome, int actualAway)
+        {
+            // Buscamos todas las predicciones para este partido e incluimos al Usuario
+            var predictions = await _context.Predictions
+                .Include(p => p.User)
+                .Where(p => p.MatchId == matchId)
+                .ToListAsync();
+
+            foreach (var pred in predictions)
+            {
+                int pointsEarned = 0;
+
+                // Caso A: Resultado exacto (8 puntos)
+                if (pred.PredictedHomeScore == actualHome && pred.PredictedAwayScore == actualAway)
+                {
+                    pointsEarned = 8;
+                }
+                // Caso B: Acierto de tendencia (3 puntos)
+                else if (DetermineWinner(pred.PredictedHomeScore, pred.PredictedAwayScore) ==
+                         DetermineWinner(actualHome, actualAway))
+                {
+                    pointsEarned = 3;
+                }
+
+                if (pointsEarned > 0)
+                {
+                    pred.User.TotalPoints += pointsEarned;
+                }
+            }
+            // No hace falta SaveChangesAsync acá porque el método principal lo hace al final
+        }
+
+        // Función auxiliar para determinar Local (1), Visitante (2) o Empate (0)
+        private int DetermineWinner(int home, int away)
+        {
+            if (home > away) return 1;
+            if (home < away) return 2;
+            return 0;
+        }
+
+
 
         private async Task<List<ExternalApiMatchDto>> FetchMatchesFromFootballDataAsync()
         {
