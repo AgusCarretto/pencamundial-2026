@@ -5,6 +5,7 @@ using PencaMundial.API.Data;
 using PencaMundial.API.DTOs;
 using PencaMundial.API.Services;
 
+
 namespace PencaMundial.API.Controllers
 {
     [Authorize] // En producción aquí chequearías [Authorize(Roles = "Admin")]
@@ -117,7 +118,30 @@ namespace PencaMundial.API.Controllers
             if (home < away) return 2; // Gana Visitante
             return 0; // Empate
         }
+
+
+        [HttpPost("simulate-match/{matchId}")]
+        public async Task<IActionResult> SimulateMatchFinish(int matchId, int homeScore, int awayScore)
+        {
+            var match = await _context.Matches.FindAsync(matchId);
+            if (match == null) return NotFound("Partido no encontrado");
+
+            // Forzamos el resultado
+            match.Status = "Finished";
+            match.HomeScore = homeScore;
+            match.AwayScore = awayScore;
+
+            await _syncService.DistributePointsAsync(matchId, homeScore, awayScore);
+
+            await _context.SaveChangesAsync();
+            return Ok(new { message = $"Partido {match.HomeTeam} vs {match.AwayTeam} finalizado simulado." });
+        }
+
+
     }
+
+
+
 
     // DTO para la petición
     public class FinishMatchDto
