@@ -1,8 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    // Ajustado al puerto real de tu Swagger
-    baseURL: 'https://localhost:7240/api',
+
+    baseURL: 'https://api-penca-agustin-dff6hdaqh9edfbd8.centralus-01.azurewebsites.net/api',
     headers: {
         'Content-Type': 'application/json',
     },

@@ -41,62 +41,84 @@ const GroupDetailsPage = () => {
         }
     };
 
-    if (loading) return <div className="p-10 text-center text-slate-500">Cargando la liga...</div>;
-    if (!group) return <div className="p-10 text-center text-red-500">Grupo no encontrado</div>;
+    if (loading) return (
+        <div className="min-h-[50vh] flex flex-col items-center justify-center space-y-4">
+            <div className="text-4xl animate-bounce">⚽</div>
+            <div className="text-yellow-400 font-black tracking-widest uppercase animate-pulse">Armando grupo...</div>
+        </div>
+    );
+    if (!group) return <div className="p-10 text-center text-red-400 font-bold">Grupo no encontrado</div>;
 
     return (
-        <div className="space-y-6">
+        <div className="max-w-5xl mx-auto px-4 py-8 relative space-y-6">
             {/* Cabecera y botón de volver */}
-            <div className="flex items-center gap-4 border-b border-slate-800 pb-4">
-                <button onClick={() => navigate('/groups')} className="p-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-slate-400 transition-colors">
-                    <ArrowLeft className="w-5 h-5" />
+            <div className="flex items-center gap-4 border-b border-green-800/50 pb-6 relative">
+                <button onClick={() => navigate('/groups')} className="p-3 bg-green-900/40 hover:bg-green-800/60 rounded-xl text-emerald-400 transition-colors border border-green-800/50 backdrop-blur-sm active:scale-95">
+                    <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
                 </button>
                 <div>
-                    <h2 className="text-2xl font-extrabold text-white">{group.name}</h2>
-                    <p className="text-slate-500 text-sm">Ranking del grupo</p>
+                    <h2 className="text-3xl sm:text-4xl font-black text-white italic drop-shadow-md tracking-tighter uppercase">{group.name}</h2>
+                    <p className="text-emerald-400/70 text-[10px] sm:text-xs font-black uppercase tracking-widest">Ranking de la liga</p>
                 </div>
             </div>
 
             {/* Tarjeta de Código de Invitación */}
-            <div className="bg-blue-950/30 border border-blue-900/50 p-5 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="bg-gradient-to-r from-green-900/50 to-green-950/50 border border-yellow-500/30 p-5 sm:p-6 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_0_20px_rgba(234,179,8,0.05)] backdrop-blur-sm">
                 <div>
-                    <span className="block text-sm font-bold text-blue-400 mb-1">Código de Invitación</span>
-                    <span className="text-slate-300 text-sm">Pasale este código a tus amigos para que se unan:</span>
+                    <span className="block text-xs font-black text-yellow-400 mb-1 uppercase tracking-widest drop-shadow-sm">Código de Invitación</span>
+                    <span className="text-emerald-200/70 text-sm">Pasale este código a tus amigos para que se unan:</span>
                 </div>
                 <button
                     onClick={handleCopyCode}
-                    className="flex items-center gap-2 bg-blue-900/50 hover:bg-blue-800 text-white px-4 py-2 rounded-lg font-mono font-bold tracking-widest border border-blue-700 transition-colors"
+                    className="flex items-center gap-3 bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-400 px-5 py-3 rounded-xl font-mono font-bold tracking-widest border border-yellow-500/40 transition-all active:scale-95 hover:shadow-[0_0_15px_rgba(234,179,8,0.2)]"
                 >
-                    {group.code}
-                    {copied ? <CheckCircle2 className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                    <span className="text-lg">{group.code}</span>
+                    {copied ? <CheckCircle2 className="w-5 h-5 text-emerald-400" /> : <Copy className="w-5 h-5" />}
                 </button>
             </div>
 
-            {/* Tabla de Posiciones (Reciclada del Global pero ajustada) */}
-            <div className="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-lg">
+            {/* Tabla de Posiciones */}
+            <div className="bg-green-900/30 backdrop-blur-sm border border-green-800/50 rounded-3xl overflow-hidden shadow-xl mt-8">
                 <table className="w-full text-left">
-                    <thead className="bg-slate-800/50 border-b border-slate-800">
+                    <thead className="bg-green-950/80 border-b border-green-800/50">
                         <tr>
-                            <th className="px-6 py-4 text-xs font-bold uppercase text-slate-400 tracking-wider w-16 text-center">Pos</th>
-                            <th className="px-6 py-4 text-xs font-bold uppercase text-slate-400 tracking-wider">Jugador</th>
-                            <th className="px-6 py-4 text-xs font-bold uppercase text-slate-400 tracking-wider text-right w-24">Pts</th>
+                            <th className="px-4 sm:px-6 py-4 text-xs font-bold uppercase text-emerald-300/70 tracking-wider w-16 sm:w-20 text-center">Pos</th>
+                            <th className="px-4 sm:px-6 py-4 text-xs font-bold uppercase text-emerald-300/70 tracking-wider">Jugador</th>
+                            <th className="px-4 sm:px-6 py-4 text-xs font-bold uppercase text-emerald-300/70 tracking-wider text-right w-24 sm:w-32">Puntos</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-800/50">
+                    <tbody className="divide-y divide-green-800/30">
                         {ranking.map((user, index) => {
                             const pos = index + 1;
                             const isMe = user.userName === currentUser.userName;
 
                             return (
-                                <tr key={user.userName} className={`${isMe ? 'bg-blue-950/20' : ''}`}>
-                                    <td className="px-6 py-4 text-center">
-                                        {pos === 1 ? <Trophy className="w-5 h-5 text-yellow-500 mx-auto" /> : <span className="font-mono font-bold text-slate-500">{pos}</span>}
+                                <tr key={user.userName} className={`${isMe ? 'bg-yellow-500/10' : ''} hover:bg-green-800/30 transition-colors`}>
+                                    <td className="px-4 sm:px-6 py-4 sm:py-5 text-center">
+                                        {pos === 1 ? (
+                                            <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 mx-auto drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
+                                        ) : (
+                                            <span className={`font-mono text-base sm:text-lg ${pos <= 3 ? 'text-white font-bold drop-shadow-sm' : 'text-emerald-400/50'}`}>
+                                                #{pos}
+                                            </span>
+                                        )}
                                     </td>
-                                    <td className="px-6 py-4">
-                                        <span className={`font-bold ${isMe ? 'text-blue-400' : 'text-white'}`}>{user.userName}</span>
+                                    <td className="px-4 sm:px-6 py-4 sm:py-5 flex items-center gap-3">
+                                        <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-inner ${isMe ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-green-950 shadow-[0_0_10px_rgba(234,179,8,0.3)]' : 'bg-green-950 text-emerald-400 border border-green-800/50'}`}>
+                                            {user.userName.substring(0, 2).toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <span className={`font-black tracking-tight text-sm sm:text-base ${isMe ? 'text-yellow-400 drop-shadow-md' : 'text-white'}`}>
+                                                {user.userName}
+                                            </span>
+                                            {isMe && <span className="text-[10px] sm:text-xs text-yellow-500/80 ml-2 font-black uppercase tracking-widest">(Tú)</span>}
+                                        </div>
                                     </td>
-                                    <td className="px-6 py-4 text-right">
-                                        <span className="text-xl font-black text-emerald-400">{user.totalPoints}</span>
+                                    <td className="px-4 sm:px-6 py-4 sm:py-5 text-right">
+                                        <span className="text-xl sm:text-2xl font-black text-emerald-400 tracking-tight drop-shadow-sm">
+                                            {user.totalPoints}
+                                        </span>
+                                        <span className="text-[10px] sm:text-xs text-emerald-600 font-bold ml-1 uppercase">pts</span>
                                     </td>
                                 </tr>
                             );
