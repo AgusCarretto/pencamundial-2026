@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { matchService } from '../services/matchService';
 import type { Match } from '../types';
-import { CalendarDays, Save, CheckCircle2, Lock, Trophy, ChevronRight } from 'lucide-react';
+import { Save, CheckCircle2, Lock, Trophy } from 'lucide-react';
 
 // Diccionario de banderas corregido con los nombres exactos de la API
 const getCountryCode = (countryName: string) => {
