@@ -18,8 +18,8 @@ export const authService = {
         localStorage.removeItem('user');
     },
 
-    register: async (userName: string, email: string, password: string) => {
-        const response = await api.post('/Auth/register', { userName, email, password });
+    register: async (name: string, phoneNumber: string, password: string) => {
+        const response = await api.post('/Auth/register', { name, phoneNumber, password });
         return response.data;
     }
 };

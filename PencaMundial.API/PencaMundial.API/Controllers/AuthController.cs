@@ -69,6 +69,50 @@ namespace PencaMundial.API.Controllers
                 TotalPoints = user.TotalPoints,
                 Token = tokenString
             });
+
         }
+
+
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterDto request)
+        {
+            // 1. Validar que el nombre de usuario no esté repetido
+            if (_context.Users.Any(u => u.UserName == request.Name))
+            {
+                return BadRequest("El nombre de usuario ya está en uso.");
+            }
+
+            // Opcional: Validar que el celular tampoco esté repetido
+            if (_context.Users.Any(u => u.PhoneNumber == request.PhoneNumber))
+            {
+                return BadRequest("Este número de celular ya está registrado.");
+            }
+
+            // 2. Encriptar la contraseña con la misma lógica/llave que el Login
+            var key = Encoding.UTF8.GetBytes("PencaMundialSecreta2026SuperLargaYSeguraParaQueNoFalle");
+            string hashedPassword;
+
+            using (var hmac = new System.Security.Cryptography.HMACSHA256(key))
+            {
+                var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(request.Password));
+                hashedPassword = Convert.ToBase64String(hashBytes); // Lo convertimos a texto para guardarlo
+            }
+
+            // 3. Crear el nuevo usuario
+            var newUser = new User
+            {
+                UserName = request.Name,
+                PhoneNumber = request.PhoneNumber,
+                PasswordHash = hashedPassword // ¡Guardamos el hash seguro, nunca la clave plana!
+            };
+
+            // 4. Guardar en la base de datos
+            _context.Users.Add(newUser);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { message = "¡Usuario creado con éxito! Ya podés iniciar sesión." });
+        }
+
     }
 }

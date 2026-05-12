@@ -11,6 +11,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHttpClient(); // Esto nos permite inyectar IHttpClientFactory
 builder.Services.AddScoped<PencaMundial.API.Services.SyncService>();
 builder.Services.AddHostedService<SyncWorker>();
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowVercel", policy =>
+    {
+        policy.WithOrigins("https://pencamundial.agustincarretto.com") // Tu dominio oficial!
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
@@ -89,7 +98,7 @@ app.UseHttpsRedirection();
 
 
 app.UseCors("PencaAppPolicy");
-
+app.UseCors("AllowVercel");
 
 app.UseAuthentication();
 app.UseAuthorization();
