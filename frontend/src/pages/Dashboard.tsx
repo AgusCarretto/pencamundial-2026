@@ -4,7 +4,6 @@ import type { Match } from '../types';
 import { Save, CheckCircle2, Lock, Trophy, Target, Info, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const [error, setError] = useState('');
 // Diccionario de banderas mapeado por nombre de país completo (inglés y español)
 const getCountryCode = (countryName: string) => {
     const map: Record<string, string> = {
@@ -144,6 +143,8 @@ const itemVariants: any = {
 };
 
 const Dashboard = () => {
+
+    const [error, setError] = useState('');
     const [matches, setMatches] = useState<Match[]>([]);
     const [loading, setLoading] = useState(true);
     // Cambiado a strings para permitir input vacío y no mostrar '0' forzado
