@@ -7,20 +7,37 @@ const LoginPage = () => {
     const [userName, setUserName] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        setIsLoading(true);
+        setError('');
         try {
             await authService.login(userName, password);
+            setIsLoading(false);
             navigate('/dashboard');
         } catch (err: any) {
+            setIsLoading(false);
             setError('Credenciales incorrectas. Revisá tu usuario y contraseña.');
         }
     };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-950 via-emerald-900 to-green-950 p-4 relative overflow-hidden">
+            {/* OVERLAY DE CARGA */}
+            {isLoading && (
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-green-950/90 backdrop-blur-md transition-all">
+                    <div className="flex flex-col items-center">
+                        <div className="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(234,179,8,0.5)]"></div>
+                        <p className="mt-4 text-yellow-400 font-black tracking-[0.2em] uppercase text-sm drop-shadow-md">
+                            Entrando a la cancha...
+                        </p>
+                    </div>
+                </div>
+            )}
+
             {/* Field lines decoration */}
             <div className="absolute inset-0 opacity-10 pointer-events-none">
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] border-4 border-white rounded-full"></div>
@@ -73,7 +90,8 @@ const LoginPage = () => {
 
                     <button
                         type="submit"
-                        className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 text-green-950 font-black py-3.5 rounded-lg shadow-[0_0_15px_rgba(234,179,8,0.4)] hover:shadow-[0_0_25px_rgba(234,179,8,0.6)] transition-all active:scale-95 uppercase tracking-wider"
+                        disabled={isLoading}
+                        className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 text-green-950 font-black py-3.5 rounded-lg shadow-[0_0_15px_rgba(234,179,8,0.4)] hover:shadow-[0_0_25px_rgba(234,179,8,0.6)] transition-all active:scale-95 uppercase tracking-wider disabled:opacity-50 disabled:pointer-events-none"
                     >
                         Entrar a la Cancha
                     </button>

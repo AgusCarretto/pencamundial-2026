@@ -38,7 +38,7 @@ const RegisterPage = () => {
 
             {/* OVERLAY DE CARGA (Aparece solo si isLoading es true) */}
             {isLoading && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-green-950/80 backdrop-blur-sm transition-all">
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-green-950/90 backdrop-blur-md transition-all">
                     <div className="flex flex-col items-center">
                         <div className="w-16 h-16 border-4 border-yellow-400 border-t-transparent rounded-full animate-spin shadow-[0_0_15px_rgba(234,179,8,0.5)]"></div>
                         <p className="mt-4 text-yellow-400 font-black tracking-[0.2em] uppercase text-sm drop-shadow-md">
@@ -128,7 +128,7 @@ const RegisterPage = () => {
                             <button
                                 type="submit"
                                 disabled={isLoading}
-                                className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 text-green-950 font-black py-4 rounded-2xl shadow-[0_0_15px_rgba(234,179,8,0.4)] hover:shadow-[0_0_25px_rgba(234,179,8,0.6)] transition-all active:scale-95 uppercase tracking-[0.2em] text-xs mt-4 disabled:opacity-50"
+                                className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 text-green-950 font-black py-4 rounded-2xl shadow-[0_0_15px_rgba(234,179,8,0.4)] hover:shadow-[0_0_25px_rgba(234,179,8,0.6)] transition-all active:scale-95 uppercase tracking-[0.2em] text-xs mt-4 disabled:opacity-50 disabled:pointer-events-none"
                             >
                                 Registrarme
                             </button>
