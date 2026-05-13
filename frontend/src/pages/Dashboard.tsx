@@ -4,6 +4,7 @@ import type { Match } from '../types';
 import { Save, CheckCircle2, Lock, Trophy, Target, Info, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+const [error, setError] = useState('');
 // Diccionario de banderas mapeado por nombre de país completo (inglés y español)
 const getCountryCode = (countryName: string) => {
     const map: Record<string, string> = {
@@ -186,15 +187,22 @@ const Dashboard = () => {
 
     const handleSavePrediction = async (matchId: number) => {
         const score = localScores[matchId] || { home: '', away: '' };
-        const h = parseInt(score.home) || 0;
-        const a = parseInt(score.away) || 0;
+
+        if (score.home === '' || score.away === '' || score.home === undefined || score.away === undefined) {
+            setError("Debe ingresar un resultado para ambos equipos antes de guardar.");
+            return;
+        }
+
+        const h = parseInt(score.home.toString());
+        const a = parseInt(score.away.toString());
+
         try {
             await matchService.submitPrediction(matchId, h, a);
             setSavedStatus(prev => ({ ...prev, [matchId]: true }));
             setHasPredicted(prev => ({ ...prev, [matchId]: true }));
             setTimeout(() => setSavedStatus(prev => ({ ...prev, [matchId]: false })), 2000);
-        } catch (error) {
-            alert("Error al guardar.");
+        } catch (err) {
+            setError("Hubo un problema con el servidor. Intentá de nuevo más tarde.");
         }
     };
 
@@ -451,6 +459,36 @@ const Dashboard = () => {
                     );
                 })}
             </motion.div>
+
+            {/* MODAL DE ERROR PERSONALIZADO */}
+            {error && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-green-950/80 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="bg-white/10 border border-white/20 p-8 rounded-3xl shadow-2xl max-w-sm w-full text-center relative overflow-hidden">
+                        {/* Decoración de fondo del modal */}
+                        <div className="absolute -top-10 -right-10 w-32 h-32 bg-yellow-400/10 rounded-full blur-3xl"></div>
+
+                        <div className="bg-red-500/20 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/50">
+                            <AlertCircle className="text-red-400 w-8 h-8" />
+                        </div>
+
+                        <h3 className="text-xl font-black text-white uppercase tracking-tighter mb-2">
+                            ¡Atención Jugador!
+                        </h3>
+
+                        <p className="text-emerald-50 text-sm font-medium mb-8">
+                            {error}
+                        </p>
+
+                        <button
+                            onClick={() => setError(null)}
+                            className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 text-green-950 font-black py-4 rounded-2xl shadow-[0_0_15px_rgba(234,179,8,0.4)] transition-all active:scale-95 uppercase tracking-widest text-xs"
+                        >
+                            Entendido, ¡OK!
+                        </button>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 };
