@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { matchService } from '../services/matchService';
 import type { Match } from '../types';
-import { Save, CheckCircle2, Lock, Trophy } from 'lucide-react';
+import { Save, CheckCircle2, Lock, Trophy, Target, Info, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 // Diccionario de banderas mapeado por nombre de país completo (inglés y español)
@@ -216,6 +216,9 @@ const Dashboard = () => {
         : playableMatches.filter(m => m.groupName === selectedGroup);
 
     return (
+
+
+
         <div className="w-full relative">
             <style>{`
                 .custom-scroll::-webkit-scrollbar { height: 6px; }
@@ -235,6 +238,64 @@ const Dashboard = () => {
                     -moz-appearance: textfield;
                 }
             `}</style>
+
+            <div className="mt-10 mb-8 p-6 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl">
+                <div className="flex items-center gap-3 mb-6">
+                    <Info className="text-yellow-400 w-6 h-6" />
+                    <h3 className="text-xl font-black text-white uppercase tracking-tighter">¿Cómo sumar puntos?</h3>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* REGLA 1: RESULTADO EXACTO */}
+                    <div className="bg-green-950/40 p-5 rounded-2xl border border-yellow-500/30 relative overflow-hidden group hover:border-yellow-400 transition-all">
+                        <div className="absolute -right-2 -top-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <Target size={80} className="text-yellow-400" />
+                        </div>
+                        <div className="flex items-center gap-4 mb-2">
+                            <div className="bg-yellow-400 p-2 rounded-lg">
+                                <Target className="text-green-950 w-5 h-5" />
+                            </div>
+                            <span className="text-2xl font-black text-yellow-400">+8 PTS</span>
+                        </div>
+                        <p className="text-white font-bold text-sm uppercase">Resultado Exacto</p>
+                        <p className="text-emerald-200/60 text-xs mt-1">Acertaste el marcador final exacto del partido.</p>
+                    </div>
+
+                    {/* REGLA 2: GANADOR O EMPATE */}
+                    <div className="bg-green-950/40 p-5 rounded-2xl border border-emerald-500/30 relative overflow-hidden group hover:border-emerald-400 transition-all">
+                        <div className="absolute -right-2 -top-2 opacity-10 group-hover:opacity-20 transition-opacity">
+                            <Trophy size={80} className="text-emerald-400" />
+                        </div>
+                        <div className="flex items-center gap-4 mb-2">
+                            <div className="bg-emerald-500 p-2 rounded-lg">
+                                <Trophy className="text-green-950 w-5 h-5" />
+                            </div>
+                            <span className="text-2xl font-black text-emerald-400">+3 PTS</span>
+                        </div>
+                        <p className="text-white font-bold text-sm uppercase">Ganador / Empate</p>
+                        <p className="text-emerald-200/60 text-xs mt-1">Acertaste quién gana o si empatan, pero no el marcador.</p>
+                    </div>
+
+                    {/* REGLA 3: NADA */}
+                    <div className="bg-green-950/40 p-5 rounded-2xl border border-red-500/20 relative overflow-hidden opacity-80">
+                        <div className="absolute -right-2 -top-2 opacity-5">
+                            <AlertCircle size={80} className="text-red-400" />
+                        </div>
+                        <div className="flex items-center gap-4 mb-2">
+                            <div className="bg-red-500/40 p-2 rounded-lg">
+                                <AlertCircle className="text-white w-5 h-5" />
+                            </div>
+                            <span className="text-2xl font-black text-red-200">0 PTS</span>
+                        </div>
+                        <p className="text-white font-bold text-sm uppercase">Sin Acierto</p>
+                        <p className="text-emerald-200/60 text-xs mt-1">No acertaste el resultado ni el ganador.</p>
+                    </div>
+                </div>
+
+                <p className="text-[10px] text-emerald-200/40 mt-6 text-center uppercase tracking-widest font-bold italic">
+                    * Los puntos se acreditan automáticamente al finalizar el encuentro oficial.
+                </p>
+            </div>
 
             <motion.div
                 initial={{ opacity: 0, y: -20 }}
@@ -276,6 +337,8 @@ const Dashboard = () => {
                 </div>
                 <div className="absolute right-0 top-0 h-full w-16 bg-gradient-to-l from-green-950 to-transparent pointer-events-none md:hidden" />
             </motion.div>
+
+
 
             {/* Tarjetas más grandes y anchas (grid-cols-1 o grid-cols-2 como máximo) */}
             <motion.div
