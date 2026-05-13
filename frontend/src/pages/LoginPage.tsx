@@ -84,7 +84,7 @@ const LoginPage = () => {
 
                     {error && (
                         <div className="bg-red-500/20 border border-red-500/50 rounded-lg p-3 backdrop-blur-sm">
-                            <p className="text-red-200 text-sm text-center font-bold">{error}</p>
+                            <p className="text-red-200 text-sm text-center font-bold">Usuario o contraseña incorrectos</p>
                         </div>
                     )}
 
