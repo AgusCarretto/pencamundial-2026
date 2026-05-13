@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity; 
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity; 
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -78,10 +79,10 @@ namespace PencaMundial.API.Controllers
 
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterDto request)
+        public async Task<IActionResult> Register([FromBody] UserCreateDto request)
         {
             // 1. Validar que el nombre de usuario no esté repetido
-            if (_context.Users.Any(u => u.UserName == request.Name))
+            if (_context.Users.Any(u => u.UserName == request.UserName))
             {
                 return BadRequest("El nombre de usuario ya está en uso.");
             }
@@ -105,7 +106,7 @@ namespace PencaMundial.API.Controllers
             // 3. Crear el nuevo usuario
             var newUser = new User
             {
-                UserName = request.Name,
+                UserName = request.UserName,
                 PhoneNumber = request.PhoneNumber,
                 PasswordHash = hashedPassword // ¡Guardamos el hash seguro, nunca la clave plana!
             };
@@ -115,6 +116,37 @@ namespace PencaMundial.API.Controllers
             await _context.SaveChangesAsync();
 
             return Ok(new { message = "¡Usuario creado con éxito! Ya podés iniciar sesión." });
+        }
+
+
+
+        [HttpGet("me")]
+        [Authorize] // Protegemos el endpoint: solo entra gente con Token válido
+        public async Task<IActionResult> GetMe()
+        {
+            // Sacamos el ID del usuario directamente del Token (la pulsera VIP)
+            var userIdString = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (string.IsNullOrEmpty(userIdString) || !int.TryParse(userIdString, out int userId))
+            {
+                return Unauthorized("Token inválido.");
+            }
+
+            // Buscamos al usuario en la base de datos
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                return NotFound("Usuario no encontrado.");
+            }
+
+            // Devolvemos los datos frescos
+            return Ok(new
+            {
+                Id = user.Id,
+                UserName = user.UserName,
+                TotalPoints = user.TotalPoints
+            });
         }
 
     }
