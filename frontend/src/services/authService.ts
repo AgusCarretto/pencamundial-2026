@@ -22,5 +22,10 @@ export const authService = {
 
         const response = await api.post('/Auth/register', { userName, phoneNumber, password });
         return response.data;
+    },
+
+    getMe: async () => {
+        const response = await api.get('/Auth/me');
+        return response.data;
     }
 };

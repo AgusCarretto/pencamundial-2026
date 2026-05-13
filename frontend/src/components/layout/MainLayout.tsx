@@ -1,16 +1,40 @@
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { Trophy, LogOut, Globe, Users, History } from 'lucide-react';
+import { authService } from '../../services/authService';
+import { useEffect, useState } from 'react';
 
 const MainLayout = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const userData = JSON.parse(localStorage.getItem('user') || '{}');
+    //const userData = JSON.parse(localStorage.getItem('user') || '{}');
 
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         navigate('/login');
     };
+
+    const [puntos, setPuntos] = useState<number>(0);
+
+    useEffect(() => {
+        const cargarDatosUsuario = async () => {
+            try {
+                // Le pegamos al backend para traer los datos actuales
+                const userData = await authService.getMe();
+
+                // Actualizamos el estado con los puntos reales de la base de datos
+                setPuntos(userData.totalPoints);
+
+                // Opcional: si guardás los datos en el localStorage, actualizalos acá también
+                // localStorage.setItem('user', JSON.stringify(userData));
+            } catch (error) {
+                console.error("Error al cargar los datos del usuario:", error);
+            }
+        };
+
+        cargarDatosUsuario();
+    }, []); // Los corchetes vacíos hacen que se ejecute al cargar el componente
+
 
     const getActiveColor = (path: string) => {
         return location.pathname === path ? 'text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.5)]' : 'text-emerald-200/60 hover:text-yellow-200';
@@ -61,7 +85,7 @@ const MainLayout = () => {
                     <div className="flex items-center gap-1.5 sm:gap-2 bg-green-900/50 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full border border-green-700/50 shadow-inner backdrop-blur-sm">
                         <span className="text-[9px] sm:text-[10px] font-black text-emerald-200/70 uppercase tracking-widest hidden sm:inline">Puntos</span>
                         <span className="text-[9px] sm:text-[10px] font-black text-emerald-200/70 uppercase tracking-widest sm:hidden">Pts</span>
-                        <span className="text-yellow-400 font-black text-base sm:text-lg drop-shadow-[0_0_5px_rgba(250,204,21,0.5)] leading-none">{userData.totalPoints || 0}</span>
+                        <span className="text-yellow-400 font-black text-base sm:text-lg drop-shadow-[0_0_5px_rgba(250,204,21,0.5)] leading-none">{puntos}</span>
                     </div>
                     <button onClick={handleLogout} className="text-emerald-200/60 hover:text-red-400 transition-colors p-1">
                         <LogOut className="w-5 h-5 sm:w-5 sm:h-5" />

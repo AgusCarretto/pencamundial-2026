@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { groupService } from '../services/groupService';
-import { Trophy, ArrowLeft, Copy, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Copy, CheckCircle2, Medal } from 'lucide-react';
 import type { UserRanking } from '../types';
 
 const GroupDetailsPage = () => {
@@ -94,14 +94,30 @@ const GroupDetailsPage = () => {
 
                             return (
                                 <tr key={user.userName} className={`${isMe ? 'bg-yellow-500/10' : ''} hover:bg-green-800/30 transition-colors`}>
-                                    <td className="px-4 sm:px-6 py-4 sm:py-5 text-center">
-                                        {pos === 1 ? (
-                                            <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-400 mx-auto drop-shadow-[0_0_10px_rgba(234,179,8,0.5)]" />
-                                        ) : (
-                                            <span className={`font-mono text-base sm:text-lg ${pos <= 3 ? 'text-white font-bold drop-shadow-sm' : 'text-emerald-400/50'}`}>
-                                                #{pos}
-                                            </span>
-                                        )}
+                                    <td className="px-4 sm:px-6 py-4 sm:py-5">
+                                        <div className="flex justify-center items-center">
+                                            {/* PUESTO 1: ORO */}
+                                            {pos === 1 && (
+                                                <Medal className="w-6 h-6 text-yellow-400 drop-shadow-[0_0_8px_rgba(250,204,21,0.8)]" />
+                                            )}
+
+                                            {/* PUESTO 2: PLATA */}
+                                            {pos === 2 && (
+                                                <Medal className="w-6 h-6 text-slate-300 drop-shadow-[0_0_8px_rgba(203,213,225,0.6)]" />
+                                            )}
+
+                                            {/* PUESTO 3: BRONCE */}
+                                            {pos === 3 && (
+                                                <Medal className="w-6 h-6 text-amber-600 drop-shadow-[0_0_8px_rgba(217,119,6,0.6)]" />
+                                            )}
+
+                                            {/* DEL 4TO EN ADELANTE: NÚMERO NORMAL */}
+                                            {pos > 3 && (
+                                                <span className="font-mono text-base sm:text-lg text-emerald-400/50">
+                                                    #{pos}
+                                                </span>
+                                            )}
+                                        </div>
                                     </td>
                                     <td className="px-4 sm:px-6 py-4 sm:py-5 flex items-center gap-3">
                                         <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm shadow-inner ${isMe ? 'bg-gradient-to-br from-yellow-400 to-yellow-500 text-green-950 shadow-[0_0_10px_rgba(234,179,8,0.3)]' : 'bg-green-950 text-emerald-400 border border-green-800/50'}`}>

@@ -224,6 +224,22 @@ const Dashboard = () => {
         ? playableMatches
         : playableMatches.filter(m => m.groupName === selectedGroup);
 
+
+    const partidosOrdenados = [...filteredMatches].sort((a, b) => {
+        // Fijate de cambiar "Finished" por "Finalizado" si en tu backend lo guardás en español
+        const aFinalizado = a.status === "Finished";
+        const bFinalizado = b.status === "Finished";
+
+        // 1. Si 'a' NO está finalizado y 'b' SÍ -> 'a' sube
+        if (!aFinalizado && bFinalizado) return -1;
+
+        // 2. Si 'a' SÍ está finalizado y 'b' NO -> 'b' sube
+        if (aFinalizado && !bFinalizado) return 1;
+
+        // 3. Si ambos están igual, ordenamos por matchDate
+        return new Date(a.matchDate).getTime() - new Date(b.matchDate).getTime();
+    });
+
     return (
 
 
@@ -357,7 +373,7 @@ const Dashboard = () => {
                 animate="show"
                 className="grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-5"
             >
-                {filteredMatches.map((match) => {
+                {partidosOrdenados.map((match) => {
                     const score = localScores[match.id] || { home: '', away: '' };
                     const isSaved = savedStatus[match.id];
                     const isPredicted = hasPredicted[match.id];
