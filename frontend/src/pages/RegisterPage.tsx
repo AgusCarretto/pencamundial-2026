@@ -27,9 +27,38 @@ const RegisterPage = () => {
                 navigate('/login');
             }, 2000);
 
-        } catch (err) {
-            setIsLoading(false); // Apagamos el loader si hay error
-            setError("Error al registrar usuario. Intentá con otro nombre o celular.");
+        } catch (err: any) {
+            setIsLoading(false);
+
+            // --- LÓGICA INTELIGENTE PARA LEER ERRORES DEL BACKEND ---
+            if (err.response && err.response.data) {
+                const backendData = err.response.data;
+
+                // 1. Si son los errores automáticos del DTO ([Required], [MinLength], etc.)
+                if (backendData.errors) {
+                    // Extraemos todos los mensajes y los unimos en un solo texto
+                    const errorMessages = Object.values(backendData.errors)
+                        .flat()
+                        .join(" | ");
+                    setError(errorMessages);
+                    return; // Cortamos la ejecución acá
+                }
+
+                // 2. Si es nuestro propio BadRequest("El nombre de usuario ya está en uso.")
+                if (typeof backendData === 'string') {
+                    setError(backendData);
+                    return;
+                }
+
+                // 3. Por si en algún lado mandamos un objeto { message: "Error" }
+                if (backendData.message) {
+                    setError(backendData.message);
+                    return;
+                }
+            }
+
+            // 4. Mensaje genérico por si se cae el servidor o no hay internet
+            setError("Error de conexión al servidor. Intentá de nuevo.");
         }
     };
 
