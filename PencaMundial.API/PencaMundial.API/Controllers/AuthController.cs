@@ -32,35 +32,39 @@ namespace PencaMundial.API.Controllers
                 return Unauthorized("Usuario o contraseña incorrectos.");
             }
 
-            // Verificamos la contraseña con la herramienta nativa
-            var hasher = new PasswordHasher<User>();
-            var result = hasher.VerifyHashedPassword(user, user.PasswordHash, dto.Password);
+            // --- ACÁ ESTÁ EL CAMBIO ---
+            // Verificamos la contraseña encriptando lo que llega con la MISMA llave del registro
+            var key = Encoding.UTF8.GetBytes("PencaMundialSecreta2026SuperLargaYSeguraParaQueNoFalle");
+            string incomingHash;
 
-            if (result != PasswordVerificationResult.Success)
+            using (var hmac = new System.Security.Cryptography.HMACSHA256(key))
+            {
+                var hashBytes = hmac.ComputeHash(Encoding.UTF8.GetBytes(dto.Password));
+                incomingHash = Convert.ToBase64String(hashBytes);
+            }
+
+            // Si el hash nuevo no coincide con el guardado en la base de datos... rebote.
+            if (user.PasswordHash != incomingHash)
             {
                 return Unauthorized("Usuario o contraseña incorrectos.");
             }
+            // ---------------------------
 
             // FABRICAMOS EL TOKEN (La pulsera VIP)
             var tokenHandler = new JwtSecurityTokenHandler();
-            // OJO ACÁ: asegurate de inyectar IConfiguration en el constructor del AuthController para poder leer la clave del appsettings
-            var key = Encoding.UTF8.GetBytes("PencaMundialSecreta2026SuperLargaYSeguraParaQueNoFalle");
-
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                    new Claim(ClaimTypes.Name, user.UserName)
-                }),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.UserName)
+        }),
                 Expires = DateTime.UtcNow.AddDays(7), // El token dura 7 días
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
-
-
 
             return Ok(new
             {
@@ -69,7 +73,6 @@ namespace PencaMundial.API.Controllers
                 TotalPoints = user.TotalPoints,
                 Token = tokenString
             });
-
         }
 
 
