@@ -480,7 +480,7 @@ const Dashboard = () => {
                         </p>
 
                         <button
-                            onClick={() => setError(null)}
+                            onClick={() => setError('')}
                             className="w-full bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-300 hover:to-yellow-400 text-green-950 font-black py-4 rounded-2xl shadow-[0_0_15px_rgba(234,179,8,0.4)] transition-all active:scale-95 uppercase tracking-widest text-xs"
                         >
                             Entendido, ¡OK!
