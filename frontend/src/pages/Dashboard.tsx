@@ -391,6 +391,24 @@ const Dashboard = () => {
                                 </div>
 
                                 {/* Marcador estilo Tablero Electrónico */}
+
+                                {/* --- NUEVO: MARCADOR EN VIVO --- */}
+                                    {match.status === 'InProgress' && (
+                                        <div className="flex flex-col items-center mb-3 bg-red-950/80 border border-red-600/50 px-4 py-1.5 rounded-xl shadow-[0_0_15px_rgba(220,38,38,0.4)] animate-in zoom-in duration-300">
+                                            <div className="flex items-center gap-1.5 mb-0.5">
+                                                <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]"></div>
+                                                <span className="text-[10px] font-black text-red-400 uppercase tracking-[0.2em]">En Vivo</span>
+                                            </div>
+                                            <div className="text-white font-mono font-black text-xl tracking-widest flex items-center gap-3 drop-shadow-md">
+                                                <span>{match.homeScore ?? 0}</span>
+                                                <span className="text-red-500/80 text-sm">-</span>
+                                                <span>{match.awayScore ?? 0}</span>
+                                            </div>
+                                        </div>
+                                    )}
+                                    {/* ------------------------------- */}
+
+
                                 <div className="flex flex-col items-center justify-start pt-2 sm:pt-4">
                                     <div className={`flex items-center gap-2 bg-black/50 p-2 sm:p-3 rounded-2xl border-2 border-green-950 shadow-inner ${isLocked ? 'opacity-60' : ''}`}>
                                         <input
@@ -435,7 +453,7 @@ const Dashboard = () => {
                                 </div>
                             ) : isLocked ? (
                                 <div className="w-full py-3 sm:py-3.5 bg-yellow-950/40 rounded-xl border border-yellow-900/50 text-center text-xs sm:text-sm font-black text-yellow-500 uppercase flex items-center justify-center gap-2 tracking-widest relative z-10 shadow-inner animate-pulse">
-                                    ⚽ En Juego (Cerrado)
+                                    ⚽ Estan jugando
                                 </div>
                             ) : (
                                 <button
