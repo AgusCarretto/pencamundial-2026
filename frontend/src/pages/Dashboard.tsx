@@ -394,7 +394,7 @@ const Dashboard = () => {
                                 <div className="flex flex-col items-center justify-start pt-0 sm:pt-2"> 
                                     
                                     {/* --- NUEVO: MARCADOR EN VIVO --- */}
-                                    {isInProgress && (
+                                    {isLocked && !isFinished && (
                                         <div className="flex flex-col items-center mb-3 bg-red-950/80 border border-red-600/50 px-4 py-1.5 rounded-xl shadow-[0_0_15px_rgba(220,38,38,0.4)] animate-in zoom-in duration-300">
                                             <div className="flex items-center gap-1.5 mb-0.5">
                                                 <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]"></div>
