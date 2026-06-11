@@ -12,7 +12,7 @@ export interface Match {
     awayScore?: number;
     groupName: string;
     matchDate: string;
-    status: 'Pending' | 'InProgress' | 'Finished';
+    status: 'Pending' | 'InProgress' | 'Finished' | 'Finalizado' | 'Scheduled';
 }
 
 export interface Prediction {
