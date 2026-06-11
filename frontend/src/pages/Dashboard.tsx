@@ -347,13 +347,13 @@ const Dashboard = () => {
                     const isSaved = savedStatus[match.id];
                     const isPredicted = hasPredicted[match.id];
                     
-                    // Lógica blindada para saber si el partido ya terminó o ya empezó
-                    const isFinished = match.status === 'Finished' || match.status === 'Finalizado';
-                    const matchTimeUtc = new Date(match.matchDate).getTime();
+                    const dateString = match.matchDate.endsWith('Z') ? match.matchDate : `${match.matchDate}Z`;
+                    const matchTimeUtc = new Date(dateString).getTime();
                     const nowUtc = new Date().getTime();
                     
-                    // Se bloquea si ya terminó, si la hora actual superó la hora del partido, o si el estado no es Pendiente/Programado
-                    const isLocked = isFinished || nowUtc >= matchTimeUtc || (match.status !== 'Pending' && match.status !== 'Scheduled');
+                    const isFinished = match.status === 'Finished' || match.status === 'Finalizado';
+                    const isInProgress = match.status === 'InProgress';
+                    const isLocked = isFinished || isInProgress || nowUtc >= matchTimeUtc || (match.status !== 'Pending' && match.status !== 'Scheduled');
 
                     return (
                         <motion.div variants={itemVariants} key={match.id} className={`bg-green-900/30 backdrop-blur-sm border ${isPredicted ? 'border-emerald-500/60 shadow-[0_0_20px_rgba(16,185,129,0.15)]' : 'border-green-800/50'} rounded-[2rem] py-7 px-4 sm:p-6 shadow-xl flex flex-col hover:scale-[1.02] hover:-translate-y-1 hover:border-yellow-500/40 hover:shadow-[0_10px_30px_rgba(234,179,8,0.2)] transition-all group relative overflow-hidden min-h-[230px]`}>
@@ -362,7 +362,7 @@ const Dashboard = () => {
                             <div className="flex justify-between items-center mb-6 relative z-10">
                                 <div className="flex gap-2 items-center flex-wrap">
                                     <span className="bg-black/40 px-3 sm:px-4 py-1.5 rounded-md border border-green-800/60 text-[11px] sm:text-[12px] font-mono text-emerald-300 uppercase shadow-inner">
-                                        {new Date(match.matchDate).toLocaleDateString('es-UY', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                        {new Date(dateString).toLocaleDateString('es-UY', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                                     </span>
                                     {isPredicted && (
                                         <span className="bg-emerald-900/80 text-emerald-300 border border-emerald-500/50 px-2 py-1 rounded-md text-[9px] font-black uppercase flex items-center gap-1 shadow-[0_0_10px_rgba(16,185,129,0.3)]">
@@ -391,9 +391,10 @@ const Dashboard = () => {
                                 </div>
 
                                 {/* Marcador estilo Tablero Electrónico */}
-
-                                {/* --- NUEVO: MARCADOR EN VIVO --- */}
-                                    {match.status === 'InProgress' && (
+                                <div className="flex flex-col items-center justify-start pt-0 sm:pt-2"> 
+                                    
+                                    {/* --- NUEVO: MARCADOR EN VIVO --- */}
+                                    {isInProgress && (
                                         <div className="flex flex-col items-center mb-3 bg-red-950/80 border border-red-600/50 px-4 py-1.5 rounded-xl shadow-[0_0_15px_rgba(220,38,38,0.4)] animate-in zoom-in duration-300">
                                             <div className="flex items-center gap-1.5 mb-0.5">
                                                 <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_8px_rgba(239,68,68,0.8)]"></div>
@@ -408,9 +409,7 @@ const Dashboard = () => {
                                     )}
                                     {/* ------------------------------- */}
 
-
-                                <div className="flex flex-col items-center justify-start pt-2 sm:pt-4">
-                                    <div className={`flex items-center gap-2 bg-black/50 p-2 sm:p-3 rounded-2xl border-2 border-green-950 shadow-inner ${isLocked ? 'opacity-60' : ''}`}>
+                                    <div className={`flex items-center gap-2 bg-black/50 p-2 sm:p-3 rounded-2xl border-2 border-green-950 shadow-inner ${isLocked ? 'opacity-40' : ''}`}>
                                         <input
                                             type="text"
                                             inputMode="numeric"
@@ -453,7 +452,7 @@ const Dashboard = () => {
                                 </div>
                             ) : isLocked ? (
                                 <div className="w-full py-3 sm:py-3.5 bg-yellow-950/40 rounded-xl border border-yellow-900/50 text-center text-xs sm:text-sm font-black text-yellow-500 uppercase flex items-center justify-center gap-2 tracking-widest relative z-10 shadow-inner animate-pulse">
-                                    ⚽ Estan jugando
+                                    ⚽ Están Jugando
                                 </div>
                             ) : (
                                 <button
